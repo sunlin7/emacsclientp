@@ -2,41 +2,46 @@
 
 ** INSTALL
 1. make install
-2. double click the [[emacsclientp-mingw64.reg]] or [[emacsclientp-cygwin64.reg]].
+2. double click the [[emacsclientp-mingw64.reg]] or [[emacsclientp-cygwin64.reg]] and
+   confirm import to regedit.
 
 ** What's EmacsClient+
 EmacsClient+ is a helper program that make the emacsclient more easy to use on
 windows (I like Ubuntu more than windows.)
 
 ** What's EmacsClient+ do for me
-1. EmacsClient+ will add '-c -a ""' as the default options if there is no option
-be found in parameters, and
-2. use less descripts string, so that it will easy show in content menu
+1. EmacsClient+ will add '-c -a ""' as the default options if there is
+   no option be found in parameters, and
+2. use short description string, so that it will easy show in content menu
 3. fix the cygwin path for emacsclient in cygwin.
 
 ** Why EmacsClient+
 I want emacs as my major editor on windows, but the emacs very slow on windows
 especially with my personal configurations. So emacs daemon mode very
-helpful. On Ubuntu, we can create a .desktop file and change the
-'EXEC=emacsclient -c -a ""' to run emacsclient that starting emacs daemon
-automatic if there is no daemon running.
+helpful. And there is a new frame for a new buffer is nessarry.
 
-But on windows, it's not easy to do that. If I want open a file that didn't
-assosiated with emacsclient, I have to choose the program from "Open With" and
-navigate to the emacsclient folder, then select it.  But, from this way, the
-emacsclient just associate with the file type, there will no action on screen
-when user double click on the assciated file if there is no emacsclient frame
-active.
+On Ubuntu, we can create a .desktop file and set the 'EXEC=emacsclient -a "" -c'
+to run emacsclient,
+1. the '-a ""' will make emacsclient try to start emacs daemon automatic if
+   there is no daemon running, and
+2. the "-c" indicate emacsclient to create a new frame for current file.
 
-So create a new frame for double clicking on a file assosiated with emacsclient
-is so nessarry, And the Emacsclient+ do for this.
+But on windows, it's not easy to do that. It seems no easy way to start emacs as
+daemon automatic. And if I want open a file that didn't assosiated with
+emacsclient, I have to choose the program from "Open With" and navigate to the
+emacsclient folder, then select it.  But, from this way, the emacsclient just
+associate with the file type, there will no action on screen when user double
+click on the assciated file if there is no emacsclient frame active.
+
+So starting emacs daemon automatic and create a new frame for open a file is
+nessarry, and the Emacsclient+ will do for these.
 
 ** Without EmacsClient+ ?
 Yea, I'd use the original emacsclient for a while, the
 [[emacsclient-raw-mingw64.reg]] or [[emacsclient-raw-cygwin64.reg]] for that, they will
 add the necessary keys to registry, and that will help to use call `emacsclient
--c -a ""` from content menu, the entries hard to understand and have problem
-when try to associate the file ext-type from right click.
+-c -a ""` from content menu, the entries are hard to understand and there still
+no default "-c" option for associating the file extention type from right click.
 
 ** Files
 | File                         | description                           |
