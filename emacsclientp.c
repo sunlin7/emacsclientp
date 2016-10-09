@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef __MINGW32__
-#include <alloca.h>
+#ifdef __MINGW32__
+# include <windows.h>
+# define PATH_SEP ";"
+#else
+# include <alloca.h>
+# define PATH_SEP ":"
 #endif
 #include <unistd.h>
+#include <libgen.h>
 #include <string.h>
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
@@ -11,17 +16,30 @@
 int main(int argc, char* argv[])
 {
     int idx = 0;
+#ifdef __MINGW32__
+    char emacsclient[] = "emacsclientw";
+#else
     char emacsclient[] = "emacsclient";
+#endif
     char *opts[] = {"-a", "", "-c", NULL};
-    const char apath[] = "PATH=/bin";
+    char *apath = alloca(1024);
     const char *opath = getenv("PATH");
-    const size_t len1 = strlen(opath);
-    const size_t len2 = len1 + 1 + 2 + sizeof(apath);
-    char *npath = alloca(len2);
+    size_t len1 = 0;
+    size_t len2 = 0;
+    char *npath = NULL;
     char **nargv;
+#ifndef __MINGW32__             /* readlink not implemented on MinGW */
+    readlink("/proc/self/exe", apath, 1024 - 1);
+#else
+    GetModuleFileName(NULL, apath, 1024 - 1);
+#endif
+    apath = dirname(apath);
+    len1 = strlen(opath);
+    len2 = sizeof("PATH=") + 1 + len1 + strlen(apath);
+    npath = alloca(len2);
 
     /* add the "/bin" to PATH */
-    snprintf(npath, len2, "%s:%s", apath, opath);
+    snprintf(npath, len2, "PATH=%s%s%s", apath, PATH_SEP, opath);
     /* setenv() is not implemented on MinGW */
     putenv(npath);
 
@@ -39,8 +57,6 @@ int main(int argc, char* argv[])
             nargv[argc + i] = opts[i];
         }
     }
-    for (idx = 0; nargv[idx]; idx++)
-        printf("%s\n", nargv[idx]);
-    execvp(emacsclient, nargv);
+    execvp(nargv[0], nargv);
     return 0;
 }
